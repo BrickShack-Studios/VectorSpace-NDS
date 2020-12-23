@@ -1,0 +1,59 @@
+#include <stdio.h>
+#include <nds.h>
+#include <nf_lib.h>
+
+int main(int argc, char **argv)
+{
+    NF_Set2D(0, 5); // Set top screen to mode 0
+    NF_Set2D(1, 5); // Set bottom screen to mode 0
+    
+    NF_SetRootFolder("NITROFS");
+
+	//NF_InitSpriteBuffers();
+	//NF_InitSpriteSys(0); // Init sprite system on top screen
+	//NF_InitSpriteSys(1); // Init sprite system on bottom screen
+
+    NF_Init16bitsBgBuffers();
+    
+    NF_Init16bitsBackBuffer(0);
+    NF_Enable16bitsBackBuffer(0);
+    NF_InitBitmapBgSys(0, 1);
+
+    NF_Init16bitsBackBuffer(1);
+    NF_Enable16bitsBackBuffer(1);
+    NF_InitBitmapBgSys(1, 1);
+
+    NF_LoadBMP("sprites/black", 0);
+    NF_LoadBMP("sprites/player", 1);
+
+    s16 x = SCREEN_WIDTH / 2;
+    s16 y = SCREEN_HEIGHT / 2;
+    
+    while(1)
+    {
+        NF_Draw16bitsImage(0, 0, x, y, true); // Erase the player's graphic
+        
+        scanKeys();
+        uint32 keys = keysCurrent();
+
+        if (keys & KEY_UP)
+            y -= 5;
+        else if (keys & KEY_DOWN)
+            y += 5;
+
+        if (keys & KEY_LEFT)
+            x -= 5;
+        else if (keys & KEY_RIGHT)
+            x += 5;
+
+        NF_Draw16bitsImage(0, 1, x, y, true); // Draw the player
+        NF_Flip16bitsBackBuffer(0);
+        
+		swiWaitForVBlank();
+
+		oamUpdate(&oamMain);
+		oamUpdate(&oamSub);
+    }
+
+    return 0;
+}
