@@ -1,3 +1,7 @@
 /VectorSpace.elf
 /VectorSpace.nds
 /build/
+*.nds
+*.elf
+*.bak*
+*~
